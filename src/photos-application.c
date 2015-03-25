@@ -288,6 +288,20 @@ photos_application_can_fullscreen_changed (PhotosApplication *self)
 
 
 static void
+photos_application_edit_current (PhotosApplication *self)
+{
+  PhotosApplicationPrivate *priv = self->priv;
+  PhotosBaseItem *item;
+
+  item = PHOTOS_BASE_ITEM (photos_base_manager_get_active_object (priv->state->item_mngr));
+  if (item == NULL)
+    return;
+
+  photos_mode_controller_set_window_mode (priv->mode_cntrlr, PHOTOS_WINDOW_MODE_EDIT);
+}
+
+
+static void
 photos_application_fullscreen (PhotosApplication *self, GVariant *parameter)
 {
   PhotosApplicationPrivate *priv = self->priv;
@@ -886,6 +900,11 @@ photos_application_startup (GApplication *application)
 
   action = g_simple_action_new ("about", NULL);
   g_signal_connect_swapped (action, "activate", G_CALLBACK (photos_application_about), self);
+  g_action_map_add_action (G_ACTION_MAP (self), G_ACTION (action));
+  g_object_unref (action);
+
+  action = g_simple_action_new ("edit-current", NULL);
+  g_signal_connect_swapped (action, "activate", G_CALLBACK (photos_application_edit_current), self);
   g_action_map_add_action (G_ACTION_MAP (self), G_ACTION (action));
   g_object_unref (action);
 
