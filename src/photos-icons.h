@@ -1,6 +1,6 @@
 /*
  * Photos - access, organize and share your photos on GNOME
- * Copyright © 2014 Red Hat, Inc.
+ * Copyright © 2014, 2015 Red Hat, Inc.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -28,6 +28,10 @@ G_BEGIN_DECLS
 #define PHOTOS_ICON_CONTENT_LOADING_SYMBOLIC "content-loading-symbolic"
 
 #define PHOTOS_ICON_EDIT_FIND_SYMBOLIC "edit-find-symbolic"
+
+#define PHOTOS_ICON_EDIT_REDO_SYMBOLIC "edit-redo-symbolic"
+
+#define PHOTOS_ICON_EDIT_UNDO_SYMBOLIC "edit-undo-symbolic"
 
 #define PHOTOS_ICON_FAVORITE "starred"
 #define PHOTOS_ICON_FAVORITE_SYMBOLIC PHOTOS_ICON_FAVORITE "-symbolic"

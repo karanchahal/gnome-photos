@@ -440,6 +440,19 @@ photos_main_toolbar_done_button_clicked (PhotosMainToolbar *self)
 
 
 static void
+photos_main_toolbar_edit_cancel_button_clicked (PhotosMainToolbar *self)
+{
+  photos_mode_controller_go_back (self->priv->mode_cntrlr);
+}
+
+
+static void
+photos_main_toolbar_edit_save_button_clicked (PhotosMainToolbar *self)
+{
+}
+
+
+static void
 photos_main_toolbar_favorite_button_clicked (PhotosMainToolbar *self)
 {
   PhotosBaseItem *item;
@@ -498,6 +511,41 @@ photos_main_toolbar_populate_for_collections (PhotosMainToolbar *self)
 
   collection = photos_item_manager_get_active_collection (PHOTOS_ITEM_MANAGER (priv->item_mngr));
   photos_main_toolbar_col_active_changed (self, collection);
+}
+
+
+static void
+photos_main_toolbar_populate_for_edit (PhotosMainToolbar *self)
+{
+  PhotosMainToolbarPrivate *priv = self->priv;
+  GtkWidget *cancel_button;
+  GtkWidget *redo_button;
+  GtkWidget *save_button;
+  GtkWidget *undo_button;
+
+  photos_header_bar_set_mode (PHOTOS_HEADER_BAR (priv->toolbar), PHOTOS_HEADER_BAR_MODE_STANDALONE);
+
+  cancel_button = gtk_button_new_with_label (_("Cancel"));
+  gtk_header_bar_pack_start (GTK_HEADER_BAR (priv->toolbar), cancel_button);
+  g_signal_connect_swapped (cancel_button,
+                            "clicked",
+                            G_CALLBACK (photos_main_toolbar_edit_cancel_button_clicked),
+                            self);
+
+  save_button = gtk_button_new_with_label (_("Save"));
+  gtk_header_bar_pack_end (GTK_HEADER_BAR (priv->toolbar), save_button);
+  g_signal_connect_swapped (save_button,
+                            "clicked",
+                            G_CALLBACK (photos_main_toolbar_edit_save_button_clicked),
+                            self);
+
+  redo_button = gtk_button_new_from_icon_name (PHOTOS_ICON_EDIT_REDO_SYMBOLIC, GTK_ICON_SIZE_BUTTON);
+  gtk_widget_set_tooltip_text (redo_button, _("Redo the last change"));
+  gtk_header_bar_pack_end (GTK_HEADER_BAR (priv->toolbar), redo_button);
+
+  undo_button = gtk_button_new_from_icon_name (PHOTOS_ICON_EDIT_UNDO_SYMBOLIC, GTK_ICON_SIZE_BUTTON);
+  gtk_widget_set_tooltip_text (undo_button, _("Undo the last change"));
+  gtk_header_bar_pack_end (GTK_HEADER_BAR (priv->toolbar), undo_button);
 }
 
 
@@ -867,6 +915,8 @@ photos_main_toolbar_reset_toolbar_mode (PhotosMainToolbar *self)
     photos_main_toolbar_populate_for_selection_mode (self);
   else if (window_mode == PHOTOS_WINDOW_MODE_COLLECTIONS)
     photos_main_toolbar_populate_for_collections (self);
+  else if (window_mode == PHOTOS_WINDOW_MODE_EDIT)
+    photos_main_toolbar_populate_for_edit (self);
   else if (window_mode == PHOTOS_WINDOW_MODE_FAVORITES)
     photos_main_toolbar_populate_for_favorites (self);
   else if (window_mode == PHOTOS_WINDOW_MODE_OVERVIEW)
