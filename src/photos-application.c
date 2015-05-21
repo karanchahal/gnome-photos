@@ -68,6 +68,7 @@ struct _PhotosApplicationPrivate
   GSettings *ss_settings;
   GSimpleAction *fs_action;
   GSimpleAction *gear_action;
+  GSimpleAction *insta_action;
   GSimpleAction *open_action;
   GSimpleAction *print_action;
   GSimpleAction *properties_action;
@@ -79,7 +80,9 @@ struct _PhotosApplicationPrivate
   GSimpleAction *sel_none_action;
   GSimpleAction *set_bg_action;
   GSimpleAction *set_ss_action;
+  GSimpleAction *sharpen_action;
   GSimpleAction *remote_display_action;
+  GSimpleAction *undo_action;
   GtkWidget *main_window;
   PhotosCameraCache *camera_cache;
   PhotosModeController *mode_cntrlr;
@@ -691,6 +694,11 @@ photos_application_window_mode_changed (PhotosApplication *self, PhotosWindowMod
   PhotosApplicationPrivate *priv = self->priv;
   gboolean enable;
 
+  enable = (mode == PHOTOS_WINDOW_MODE_EDIT);
+  g_simple_action_set_enabled (priv->insta_action, enable);
+  g_simple_action_set_enabled (priv->sharpen_action, enable);
+  g_simple_action_set_enabled (priv->undo_action, enable);
+
   enable = (mode == PHOTOS_WINDOW_MODE_COLLECTIONS
             || mode == PHOTOS_WINDOW_MODE_FAVORITES
             || mode == PHOTOS_WINDOW_MODE_OVERVIEW
@@ -922,6 +930,9 @@ photos_application_startup (GApplication *application)
   g_signal_connect (priv->gear_action, "activate", G_CALLBACK (photos_application_action_toggle), self);
   g_action_map_add_action (G_ACTION_MAP (self), G_ACTION (priv->gear_action));
 
+  priv->insta_action = g_simple_action_new ("insta-current", G_VARIANT_TYPE_INT16);
+  g_action_map_add_action (G_ACTION_MAP (self), G_ACTION (priv->insta_action));
+
   priv->open_action = g_simple_action_new ("open-current", NULL);
   g_signal_connect_swapped (priv->open_action, "activate", G_CALLBACK (photos_application_open_current), self);
   g_action_map_add_action (G_ACTION_MAP (self), G_ACTION (priv->open_action));
@@ -991,6 +1002,12 @@ photos_application_startup (GApplication *application)
   g_signal_connect_swapped (priv->set_ss_action, "activate", G_CALLBACK (photos_application_set_bg_common), self);
   g_action_map_add_action (G_ACTION_MAP (self), G_ACTION (priv->set_ss_action));
 
+  priv->sharpen_action = g_simple_action_new ("sharpen-current", G_VARIANT_TYPE_DOUBLE);
+  g_action_map_add_action (G_ACTION_MAP (self), G_ACTION (priv->sharpen_action));
+
+  priv->undo_action = g_simple_action_new ("undo-current", NULL);
+  g_action_map_add_action (G_ACTION_MAP (self), G_ACTION (priv->undo_action));
+
   g_signal_connect_swapped (priv->mode_cntrlr,
                             "window-mode-changed",
                             G_CALLBACK (photos_application_window_mode_changed),
@@ -1057,6 +1074,7 @@ photos_application_dispose (GObject *object)
   g_clear_object (&priv->ss_settings);
   g_clear_object (&priv->fs_action);
   g_clear_object (&priv->gear_action);
+  g_clear_object (&priv->insta_action);
   g_clear_object (&priv->open_action);
   g_clear_object (&priv->print_action);
   g_clear_object (&priv->properties_action);
@@ -1068,6 +1086,8 @@ photos_application_dispose (GObject *object)
   g_clear_object (&priv->sel_none_action);
   g_clear_object (&priv->set_bg_action);
   g_clear_object (&priv->set_ss_action);
+  g_clear_object (&priv->sharpen_action);
+  g_clear_object (&priv->undo_action);
   g_clear_object (&priv->camera_cache);
   g_clear_object (&priv->mode_cntrlr);
   g_clear_object (&priv->extract_priority);
