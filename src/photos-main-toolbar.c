@@ -544,6 +544,7 @@ photos_main_toolbar_populate_for_edit (PhotosMainToolbar *self)
   gtk_header_bar_pack_end (GTK_HEADER_BAR (priv->toolbar), redo_button);
 
   undo_button = gtk_button_new_from_icon_name (PHOTOS_ICON_EDIT_UNDO_SYMBOLIC, GTK_ICON_SIZE_BUTTON);
+  gtk_actionable_set_action_name (GTK_ACTIONABLE (undo_button), "app.undo-current");
   gtk_widget_set_tooltip_text (undo_button, _("Undo the last change"));
   gtk_header_bar_pack_end (GTK_HEADER_BAR (priv->toolbar), undo_button);
 }
