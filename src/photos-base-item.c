@@ -59,7 +59,6 @@ struct _PhotosBaseItemPrivate
   GdkPixbuf *original_icon;
   GeglNode *graph;
   GeglNode *load;
-  GeglRectangle bbox;
   GMutex mutex_download;
   GMutex mutex;
   GQuark equipment;
@@ -743,7 +742,6 @@ photos_base_item_load (PhotosBaseItem *self, GCancellable *cancellable, GError *
   gegl_node_set (priv->load, "path", path, NULL);
   output = photos_pipeline_get_output (priv->pipeline);
   gegl_node_process (output);
-  priv->bbox = gegl_node_get_bounding_box (output);
 
   ret_val = g_object_ref (output);
 
@@ -788,7 +786,6 @@ photos_base_item_process (PhotosBaseItem *self, GCancellable *cancellable, GErro
 
   output = photos_pipeline_get_output (priv->pipeline);
   gegl_node_process (output);
-  priv->bbox = gegl_node_get_bounding_box (output);
 }
 
 
@@ -1223,13 +1220,6 @@ const gchar *
 photos_base_item_get_author (PhotosBaseItem *self)
 {
   return self->priv->author;
-}
-
-
-void
-photos_base_item_get_bbox (PhotosBaseItem *self, GeglRectangle *out_bbox)
-{
-  *out_bbox = self->priv->bbox;
 }
 
 
