@@ -40,6 +40,8 @@ G_BEGIN_DECLS
 #define PHOTOS_ICON_GO_NEXT_SYMBOLIC "go-next-symbolic"
 #define PHOTOS_ICON_GO_PREVIOUS_SYMBOLIC "go-previous-symbolic"
 
+#define PHOTOS_ICON_IMAGE_SHARPEN_SYMBOLIC "image-sharpen-symbolic"
+
 #define PHOTOS_ICON_IMAGE_X_GENERIC_SYMBOLIC "image-x-generic-symbolic"
 
 #define PHOTOS_ICON_OBJECT_SELECT_SYMBOLIC "object-select-symbolic"

@@ -218,6 +218,8 @@ gnome_photos_SOURCES = \
 	photos-spinner-box.h \
 	photos-tool.c \
 	photos-tool.h \
+	photos-tool-sharpen.c \
+	photos-tool-sharpen.h \
 	photos-tracker-change-event.c \
 	photos-tracker-change-event.h \
 	photos-tracker-change-monitor.c \
