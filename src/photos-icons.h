@@ -40,6 +40,7 @@ G_BEGIN_DECLS
 #define PHOTOS_ICON_GO_NEXT_SYMBOLIC "go-next-symbolic"
 #define PHOTOS_ICON_GO_PREVIOUS_SYMBOLIC "go-previous-symbolic"
 
+#define PHOTOS_ICON_IMAGE_CROP_SYMBOLIC "image-crop-symbolic"
 #define PHOTOS_ICON_IMAGE_FILTER_SYMBOLIC "image-filter-symbolic"
 #define PHOTOS_ICON_IMAGE_SHARPEN_SYMBOLIC "image-sharpen-symbolic"
 
