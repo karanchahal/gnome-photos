@@ -134,8 +134,6 @@ update_autoscale(ViewHelper *self)
 
     } else if (self->autoscale_policy == GEGL_GTK_VIEW_AUTOSCALE_CONTENT) {
         /* Calculate and set scaling factor to make the content fit inside */
-        float delta_x;
-        float delta_y;
         float scale = 1.0;
 
         if (bbox.width > viewport.width || bbox.height > viewport.height) {
@@ -152,10 +150,8 @@ update_autoscale(ViewHelper *self)
         self->scale = scale;
 
         /* At this point, viewport is definitely bigger than bbox. */
-        delta_x = (viewport.width - bbox.width) / 2.0;
-        delta_y = (viewport.height - bbox.height) / 2.0;
-        self->x = -delta_x;
-        self->y = -delta_y;
+        self->x = (bbox.width - viewport.width) / 2.0;
+        self->y = (bbox.height - viewport.height) / 2.0;
     }
 
 }
