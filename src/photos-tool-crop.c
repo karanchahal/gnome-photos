@@ -21,6 +21,8 @@
 
 #include "config.h"
 
+#include <math.h>
+
 #include <cairo.h>
 #include <gdk/gdk.h>
 #include <gio/gio.h>
@@ -439,6 +441,28 @@ photos_tool_crop_surface_draw (PhotosToolCrop *self)
 
 
 static void
+photos_tool_crop_surface_change_constraint (PhotosToolCrop *self)
+{
+  gdouble aspect_ratio;
+  gdouble crop_center_x;
+  gdouble crop_center_y;
+  gdouble old_area;
+
+  crop_center_x = self->crop_x + self->crop_width / 2;
+  crop_center_y = self->crop_y + self->crop_height / 2;
+  old_area = self->crop_height * self->crop_width;
+
+  aspect_ratio = photos_tool_crop_calculate_aspect_ratio (self);
+  self->crop_height = sqrt (old_area / aspect_ratio);
+  self->crop_width = sqrt (old_area * aspect_ratio);
+  self->crop_x = crop_center_x - self->crop_width / 2;
+  self->crop_y = crop_center_y - self->crop_height / 2;
+
+  photos_tool_crop_surface_draw (self);
+}
+
+
+static void
 photos_tool_crop_surface_reset (PhotosToolCrop *self)
 {
   gdouble crop_aspect_ratio;
@@ -468,35 +492,14 @@ photos_tool_crop_surface_reset (PhotosToolCrop *self)
 static void
 photos_tool_crop_changed (PhotosToolCrop *self)
 {
-  photos_tool_crop_surface_reset (self);
+  gint active;
+
+  active = gtk_combo_box_get_active (GTK_COMBO_BOX (self->combo_box));
+  if (CONSTRAINTS[active].aspect_ratio_type == PHOTOS_TOOL_CROP_ASPECT_RATIO_ANY)
+    return;
+
+  photos_tool_crop_surface_change_constraint (self);
   gtk_widget_queue_draw (self->view);
-}
-
-
-static void
-photos_tool_crop_surface_resize (PhotosToolCrop *self)
-{
-  gdouble crop_aspect_ratio;
-  gdouble aspect_ratio;
-
-  aspect_ratio = (gdouble) self->bbox_source.width / self->bbox_source.height;
-  crop_aspect_ratio = photos_tool_crop_calculate_aspect_ratio (self);
-
-  if (crop_aspect_ratio < aspect_ratio)
-    {
-      self->crop_height = 0.7 * self->bbox_scaled.height;
-      self->crop_width = self->crop_height * crop_aspect_ratio;
-    }
-  else
-    {
-      self->crop_width = 0.7 * self->bbox_scaled.width;
-      self->crop_height = self->crop_width / crop_aspect_ratio;
-    }
-
-  self->crop_x = ((gdouble) self->bbox_scaled.width - self->crop_width) / 2.0;
-  self->crop_y = ((gdouble) self->bbox_scaled.height - self->crop_height) / 2.0;
-
-  photos_tool_crop_surface_draw (self);
 }
 
 
@@ -508,17 +511,17 @@ photos_tool_crop_size_allocate (PhotosToolCrop *self, GdkRectangle *allocation)
   gdouble crop_x_ratio;
   gdouble crop_y_ratio;
 
-  crop_height_ratio = self->crop_height / self->bbox_scaled.height;
-  crop_width_ratio = self->crop_width / self->bbox_scaled.width;
-  crop_x_ratio = self->crop_x / self->bbox_scaled.width;
-  crop_y_ratio = self->crop_y / self->bbox_scaled.height;
+  crop_height_ratio = self->crop_height / (gdouble) self->bbox_scaled.height;
+  crop_width_ratio = self->crop_width / (gdouble) self->bbox_scaled.width;
+  crop_x_ratio = self->crop_x / (gdouble) self->bbox_scaled.width;
+  crop_y_ratio = self->crop_y / (gdouble) self->bbox_scaled.height;
 
   photos_tool_crop_surface_create (self);
 
-  self->crop_height = crop_height_ratio * self->bbox_scaled.height;
-  self->crop_width = crop_width_ratio * self->bbox_scaled.width;
-  self->crop_x = crop_x_ratio * self->bbox_scaled.width;
-  self->crop_y = crop_y_ratio * self->bbox_scaled.height;
+  self->crop_height = crop_height_ratio * (gdouble) self->bbox_scaled.height;
+  self->crop_width = crop_width_ratio * (gdouble) self->bbox_scaled.width;
+  self->crop_x = crop_x_ratio * (gdouble) self->bbox_scaled.width;
+  self->crop_y = crop_y_ratio * (gdouble) self->bbox_scaled.height;
 
   photos_tool_crop_surface_draw (self);
 }
